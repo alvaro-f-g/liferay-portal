@@ -30,8 +30,11 @@ import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.Layout;
 import com.liferay.portal.kernel.portlet.SearchOrderByUtil;
 import com.liferay.portal.kernel.portlet.url.builder.PortletURLBuilder;
+import com.liferay.portal.kernel.security.permission.ActionKeys;
+import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.liferay.portal.kernel.service.GroupLocalServiceUtil;
 import com.liferay.portal.kernel.service.LayoutLocalServiceUtil;
+import com.liferay.portal.kernel.service.permission.LayoutPermissionUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.ParamUtil;
@@ -150,6 +153,13 @@ public class FragmentEntryLinkDisplayContext {
 			_fetchLayoutPageTemplateEntry(layout);
 
 		ThemeDisplay themeDisplay = _getThemeDisplay();
+
+		if (!_hasPermission(layout, themeDisplay.getPermissionChecker())) {
+			return StringBundler.concat(
+				StringPool.OPEN_BRACKET,
+				LanguageUtil.get(themeDisplay.getLocale(), "restricted-page"),
+				StringPool.CLOSE_BRACKET);
+		}
 
 		String name = layout.getName(themeDisplay.getLocale());
 
@@ -633,6 +643,28 @@ public class FragmentEntryLinkDisplayContext {
 			WebKeys.THEME_DISPLAY);
 
 		return _themeDisplay;
+	}
+
+	private boolean _hasPermission(
+		Layout layout, PermissionChecker permissionChecker) {
+
+		long plid = layout.getPlid();
+
+		if (layout.isDraftLayout()) {
+			plid = layout.getClassPK();
+		}
+
+		try {
+			return LayoutPermissionUtil.contains(
+				permissionChecker, plid, ActionKeys.VIEW);
+		}
+		catch (PortalException portalException) {
+			if (_log.isDebugEnabled()) {
+				_log.debug(portalException);
+			}
+
+			return false;
+		}
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(
