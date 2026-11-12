@@ -195,7 +195,10 @@ public class GroupFragmentEntryLinkDisplayContext {
 				groupFragmentEntryUsageCounts.entrySet()) {
 
 			groupFragmentEntryUsages.put(
-				_groupLocalService.getGroup(entry.getKey()), entry.getValue());
+				_groupLocalService.getGroup(entry.getKey()),
+				_fragmentEntryLinkLocalService.
+					getAllFragmentEntryLinksCountByFragmentEntry(
+						entry.getKey(), getFragmentEntry()));
 		}
 
 		_groupFragmentEntryUsages = groupFragmentEntryUsages;
