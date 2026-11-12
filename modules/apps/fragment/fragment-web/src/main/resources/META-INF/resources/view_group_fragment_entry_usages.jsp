@@ -69,6 +69,21 @@ renderResponse.setTitle(LanguageUtil.format(request, "usages-and-propagation-x",
 								translate="<%= true %>"
 								value="<%= String.valueOf(groupFragmentEntryLinkDisplayContext.getFragmentGroupUsageCount(group)) %>"
 							/>
+
+							<portlet:renderURL var="viewPagesURL">
+								<portlet:param name="mvcRenderCommandName" value="/fragment/view_fragment_entry_usages" />
+								<portlet:param name="redirect" value="<%= currentURL %>" />
+								<portlet:param name="fragmentCollectionId" value="<%= String.valueOf(groupFragmentEntryLinkDisplayContext.getFragmentCollectionId()) %>" />
+								<portlet:param name="fragmentEntryId" value="<%= String.valueOf(fragmentEntry.getFragmentEntryId()) %>" />
+								<portlet:param name="groupId" value="<%= String.valueOf(group.getGroupId()) %>" />
+							</portlet:renderURL>
+
+							<liferay-ui:search-container-column-text>
+								<clay:link
+									href="<%= viewPagesURL %>"
+									label="view-pages"
+								/>
+							</liferay-ui:search-container-column-text>
 						</liferay-ui:search-container-row>
 
 						<liferay-ui:search-iterator
