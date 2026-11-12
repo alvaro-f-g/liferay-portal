@@ -48,6 +48,7 @@ import com.liferay.portal.kernel.model.MVCCModel;
 import com.liferay.portal.kernel.model.SystemEventConstants;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.repository.model.FileEntry;
+import com.liferay.portal.kernel.security.permission.InlineSQLHelper;
 import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.service.LayoutLocalService;
 import com.liferay.portal.kernel.service.PortletPreferencesLocalService;
@@ -1010,6 +1011,9 @@ public class FragmentEntryLinkLocalServiceImpl
 			groupId
 		).and(
 			predicate
+		).and(
+			_inlineSQLHelper.getPermissionWherePredicate(
+				Layout.class, FragmentEntryLinkTable.INSTANCE.plid, groupId)
 		);
 	}
 
@@ -1223,6 +1227,9 @@ public class FragmentEntryLinkLocalServiceImpl
 
 	@Reference
 	private GroupLocalService _groupLocalService;
+
+	@Reference
+	private InlineSQLHelper _inlineSQLHelper;
 
 	@Reference
 	private JSONFactory _jsonFactory;
