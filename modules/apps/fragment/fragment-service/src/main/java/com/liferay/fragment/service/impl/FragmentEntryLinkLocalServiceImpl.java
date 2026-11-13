@@ -1007,14 +1007,47 @@ public class FragmentEntryLinkLocalServiceImpl
 	}
 
 	private Predicate _getGroupPredicate(long groupId, Predicate predicate) {
-		return FragmentEntryLinkTable.INSTANCE.groupId.eq(
+		Predicate groupPredicate = FragmentEntryLinkTable.INSTANCE.groupId.eq(
 			groupId
 		).and(
 			predicate
-		).and(
-			_inlineSQLHelper.getPermissionWherePredicate(
-				Layout.class, FragmentEntryLinkTable.INSTANCE.plid, groupId)
 		);
+
+		Predicate layoutPermissionPredicate =
+			_inlineSQLHelper.getPermissionWherePredicate(
+				Layout.class, LayoutTable.INSTANCE.plid, groupId);
+
+		if (layoutPermissionPredicate == null) {
+			return groupPredicate;
+		}
+
+		long layoutClassNameId = _portal.getClassNameId(Layout.class);
+
+		return groupPredicate.and(
+			FragmentEntryLinkTable.INSTANCE.plid.in(
+				DSLQueryFactoryUtil.select(
+					LayoutTable.INSTANCE.plid
+				).from(
+					LayoutTable.INSTANCE
+				).where(
+					LayoutTable.INSTANCE.groupId.eq(
+						groupId
+					).and(
+						LayoutTable.INSTANCE.classNameId.neq(
+							layoutClassNameId
+						).and(
+							layoutPermissionPredicate
+						).or(
+							LayoutTable.INSTANCE.classNameId.eq(
+								layoutClassNameId
+							).and(
+								_inlineSQLHelper.getPermissionWherePredicate(
+									Layout.class, LayoutTable.INSTANCE.classPK,
+									groupId)
+							)
+						).withParentheses()
+					)
+				)));
 	}
 
 	private Predicate _getLatestFragmentEntryLinkPredicate(
