@@ -80,8 +80,15 @@ renderResponse.setTitle(LanguageUtil.format(request, "usages-and-propagation-x",
 
 							<liferay-ui:search-container-column-text>
 								<clay:link
+									aria-label='<%= LanguageUtil.get(request, "view-pages") %>'
+									cssClass="lfr-portal-tooltip"
+									displayType="secondary"
 									href="<%= viewPagesURL %>"
-									label="view-pages"
+									icon="view"
+									monospaced="<%= true %>"
+									small="<%= true %>"
+									title='<%= LanguageUtil.get(request, "view-pages") %>'
+									type="button"
 								/>
 							</liferay-ui:search-container-column-text>
 						</liferay-ui:search-container-row>
