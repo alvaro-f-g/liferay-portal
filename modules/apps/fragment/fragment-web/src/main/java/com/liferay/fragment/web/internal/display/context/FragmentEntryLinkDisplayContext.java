@@ -30,14 +30,18 @@ import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.Layout;
 import com.liferay.portal.kernel.portlet.SearchOrderByUtil;
 import com.liferay.portal.kernel.portlet.url.builder.PortletURLBuilder;
+import com.liferay.portal.kernel.security.auth.AuthTokenUtil;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.liferay.portal.kernel.service.GroupLocalServiceUtil;
 import com.liferay.portal.kernel.service.LayoutLocalServiceUtil;
 import com.liferay.portal.kernel.service.permission.LayoutPermissionUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
+import com.liferay.portal.kernel.util.Constants;
+import com.liferay.portal.kernel.util.HttpComponentsUtil;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.ParamUtil;
+import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
 
@@ -177,6 +181,52 @@ public class FragmentEntryLinkDisplayContext {
 			name, StringPool.SPACE, StringPool.OPEN_PARENTHESIS,
 			LanguageUtil.get(themeDisplay.getLocale(), "draft"),
 			StringPool.CLOSE_PARENTHESIS);
+	}
+
+	public String getFragmentEntryLinkPreviewURL(
+		FragmentEntryLink fragmentEntryLink) {
+
+		Layout layout = _fetchLayout(fragmentEntryLink);
+
+		if (layout == null) {
+			return null;
+		}
+
+		ThemeDisplay themeDisplay = _getThemeDisplay();
+
+		if (!_hasPermission(layout, themeDisplay.getPermissionChecker()) ||
+			!_isPreviewable(layout)) {
+
+			return null;
+		}
+
+		try {
+			if (layout.isDraftLayout() &&
+				!LayoutPermissionUtil.containsLayoutPreviewDraftPermission(
+					themeDisplay.getPermissionChecker(), layout.getClassPK())) {
+
+				return null;
+			}
+
+			String layoutFullURL = PortalUtil.getLayoutFullURL(
+				layout, themeDisplay);
+
+			layoutFullURL = HttpComponentsUtil.setParameter(
+				layoutFullURL, "p_l_back_url", themeDisplay.getURLCurrent());
+			layoutFullURL = HttpComponentsUtil.setParameter(
+				layoutFullURL, "p_l_mode", Constants.PREVIEW);
+
+			return HttpComponentsUtil.addParameter(
+				layoutFullURL, "p_p_auth",
+				AuthTokenUtil.getToken(_httpServletRequest));
+		}
+		catch (PortalException portalException) {
+			if (_log.isDebugEnabled()) {
+				_log.debug(portalException);
+			}
+
+			return null;
+		}
 	}
 
 	public String getFragmentEntryLinkTypeLabel(
@@ -666,6 +716,20 @@ public class FragmentEntryLinkDisplayContext {
 
 			return false;
 		}
+	}
+
+	private boolean _isPreviewable(Layout layout) {
+		LayoutPageTemplateEntry layoutPageTemplateEntry =
+			_fetchLayoutPageTemplateEntry(layout);
+
+		if ((layoutPageTemplateEntry == null) ||
+			(layoutPageTemplateEntry.getType() ==
+				LayoutPageTemplateEntryTypeConstants.BASIC)) {
+
+			return true;
+		}
+
+		return false;
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(
