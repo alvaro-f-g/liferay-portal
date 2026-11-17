@@ -77,7 +77,7 @@ public class FragmentEntryLinkDisplayContext {
 			_allUsageCount =
 				FragmentEntryLinkLocalServiceUtil.
 					getAllFragmentEntryLinksCountByFragmentEntry(
-						getGroupId(), getFragmentEntry());
+						_getGroupId(), getFragmentEntry());
 		}
 		else {
 			_allUsageCount =
@@ -98,7 +98,7 @@ public class FragmentEntryLinkDisplayContext {
 			_displayPagesUsageCount =
 				FragmentEntryLinkLocalServiceUtil.
 					getAllLayoutPageTemplateFragmentEntryLinksCountByFragmentEntry(
-						getGroupId(), getFragmentEntry(),
+						_getGroupId(), getFragmentEntry(),
 						LayoutPageTemplateEntryTypeConstants.DISPLAY_PAGE);
 		}
 		else {
@@ -262,18 +262,8 @@ public class FragmentEntryLinkDisplayContext {
 		return "page";
 	}
 
-	public long getGroupId() {
-		if (_groupId != null) {
-			return _groupId;
-		}
-
-		_groupId = ParamUtil.getLong(_renderRequest, "groupId");
-
-		return _groupId;
-	}
-
 	public String getGroupName() {
-		Group group = GroupLocalServiceUtil.fetchGroup(getGroupId());
+		Group group = GroupLocalServiceUtil.fetchGroup(_getGroupId());
 
 		if (group == null) {
 			return StringPool.BLANK;
@@ -302,7 +292,7 @@ public class FragmentEntryLinkDisplayContext {
 			_masterPagesUsageCount =
 				FragmentEntryLinkLocalServiceUtil.
 					getAllLayoutPageTemplateFragmentEntryLinksCountByFragmentEntry(
-						getGroupId(), getFragmentEntry(),
+						_getGroupId(), getFragmentEntry(),
 						LayoutPageTemplateEntryTypeConstants.MASTER_LAYOUT);
 		}
 		else {
@@ -359,7 +349,7 @@ public class FragmentEntryLinkDisplayContext {
 			_pageTemplatesUsageCount =
 				FragmentEntryLinkLocalServiceUtil.
 					getAllLayoutPageTemplateFragmentEntryLinksCountByFragmentEntry(
-						getGroupId(), getFragmentEntry(),
+						_getGroupId(), getFragmentEntry(),
 						LayoutPageTemplateEntryTypeConstants.BASIC);
 		}
 		else {
@@ -382,7 +372,7 @@ public class FragmentEntryLinkDisplayContext {
 			_pagesUsageCount =
 				FragmentEntryLinkLocalServiceUtil.
 					getAllLayoutFragmentEntryLinksCountByFragmentEntry(
-						getGroupId(), getFragmentEntry());
+						_getGroupId(), getFragmentEntry());
 		}
 		else {
 			_pagesUsageCount =
@@ -411,7 +401,7 @@ public class FragmentEntryLinkDisplayContext {
 			"groupId",
 			() -> {
 				if (isGroupUsages()) {
-					return getGroupId();
+					return _getGroupId();
 				}
 
 				return null;
@@ -568,7 +558,7 @@ public class FragmentEntryLinkDisplayContext {
 	}
 
 	public boolean isGroupUsages() {
-		if (getGroupId() > 0) {
+		if (_getGroupId() > 0) {
 			return true;
 		}
 
@@ -615,7 +605,7 @@ public class FragmentEntryLinkDisplayContext {
 			if (isGroupUsages()) {
 				return FragmentEntryLinkLocalServiceUtil.
 					getAllLayoutFragmentEntryLinksByFragmentEntry(
-						getGroupId(), fragmentEntry, start, end,
+						_getGroupId(), fragmentEntry, start, end,
 						orderByComparator);
 			}
 
@@ -630,7 +620,7 @@ public class FragmentEntryLinkDisplayContext {
 			if (isGroupUsages()) {
 				return FragmentEntryLinkLocalServiceUtil.
 					getAllLayoutPageTemplateFragmentEntryLinksByFragmentEntry(
-						getGroupId(), fragmentEntry, layoutPageTemplateType,
+						_getGroupId(), fragmentEntry, layoutPageTemplateType,
 						start, end, orderByComparator);
 			}
 
@@ -643,7 +633,8 @@ public class FragmentEntryLinkDisplayContext {
 		if (isGroupUsages()) {
 			return FragmentEntryLinkLocalServiceUtil.
 				getAllFragmentEntryLinksByFragmentEntry(
-					getGroupId(), fragmentEntry, start, end, orderByComparator);
+					_getGroupId(), fragmentEntry, start, end,
+					orderByComparator);
 		}
 
 		return FragmentEntryLinkLocalServiceUtil.
@@ -668,6 +659,16 @@ public class FragmentEntryLinkDisplayContext {
 		}
 
 		return getAllUsageCount();
+	}
+
+	private long _getGroupId() {
+		if (_groupId != null) {
+			return _groupId;
+		}
+
+		_groupId = ParamUtil.getLong(_renderRequest, "groupId");
+
+		return _groupId;
 	}
 
 	private int _getLayoutPageTemplateType(String navigation) {
