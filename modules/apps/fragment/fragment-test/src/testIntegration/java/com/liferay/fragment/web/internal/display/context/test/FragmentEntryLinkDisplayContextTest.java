@@ -254,17 +254,17 @@ public class FragmentEntryLinkDisplayContextTest {
 			_getFragmentEntryLinkDisplayContext(
 				fragmentEntry.getFragmentEntryId(), "all");
 
-		_assertPreviewURL(
-			draftLayoutFragmentEntryLink, fragmentEntryLinkDisplayContext);
 		_assertNullPreviewURL(
 			_displayPageTemplateFragmentEntryLink,
 			fragmentEntryLinkDisplayContext);
-		_assertPreviewURL(
-			layoutFragmentEntryLink, fragmentEntryLinkDisplayContext);
 		_assertNullPreviewURL(
 			_masterPageFragmentEntryLink, fragmentEntryLinkDisplayContext);
 		_assertPreviewURL(
 			_pageTemplateFragmentEntryLink, fragmentEntryLinkDisplayContext);
+		_assertPreviewURL(
+			draftLayoutFragmentEntryLink, fragmentEntryLinkDisplayContext);
+		_assertPreviewURL(
+			layoutFragmentEntryLink, fragmentEntryLinkDisplayContext);
 		_assertPreviewURL(
 			privateLayoutFragmentEntryLink, fragmentEntryLinkDisplayContext);
 
