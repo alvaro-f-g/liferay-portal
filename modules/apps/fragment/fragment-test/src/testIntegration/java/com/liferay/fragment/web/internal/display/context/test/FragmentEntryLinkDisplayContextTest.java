@@ -392,6 +392,9 @@ public class FragmentEntryLinkDisplayContextTest {
 		Assert.assertNull(searchContainer.getRowChecker());
 
 		_testGetSearchContainer(
+			_layoutFragmentEntryLink2.getGroupId(), "all",
+			_layoutFragmentEntryLink2);
+		_testGetSearchContainer(
 			groupId, "display-page-templates",
 			_displayPageTemplateFragmentEntryLink);
 		_testGetSearchContainer(
@@ -399,9 +402,6 @@ public class FragmentEntryLinkDisplayContextTest {
 		_testGetSearchContainer(
 			groupId, "page-templates", _pageTemplateFragmentEntryLink);
 		_testGetSearchContainer(groupId, "pages", _layoutFragmentEntryLink1);
-		_testGetSearchContainer(
-			_layoutFragmentEntryLink2.getGroupId(), "all",
-			_layoutFragmentEntryLink2);
 
 		searchContainer = _testGetSearchContainer(
 			0, "all", _layoutFragmentEntryLink1, _layoutFragmentEntryLink2,
@@ -477,8 +477,7 @@ public class FragmentEntryLinkDisplayContextTest {
 			fragmentEntryLinkDisplayContext, "getFragmentEntryLinkPreviewURL",
 			new Class<?>[] {FragmentEntryLink.class}, fragmentEntryLink);
 
-		Assert.assertNotNull(previewURL);
-		Assert.assertTrue(previewURL, previewURL.contains("p_l_mode=preview"));
+		Assert.assertTrue(previewURL.contains("p_l_mode=preview"));
 	}
 
 	private void _assertWarnMessages(
