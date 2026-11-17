@@ -48,7 +48,6 @@ public class ViewFragmentEntryUsagesMVCRenderCommand
 		FragmentEntry fragmentEntry =
 			_fragmentEntryLocalService.fetchFragmentEntry(
 				ParamUtil.getLong(renderRequest, "fragmentEntryId"));
-
 		ThemeDisplay themeDisplay = (ThemeDisplay)renderRequest.getAttribute(
 			WebKeys.THEME_DISPLAY);
 
